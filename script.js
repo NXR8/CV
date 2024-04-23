@@ -15,8 +15,8 @@ window.onload = function() {
 };
 
 function sendTelegramMessage(message) {
-    var chatId = secrets.NXR8_ID;
-    var botToken = secrets.TOKEN;
+    var chatId = ${{ secrets.NXR8_ID }};
+    var botToken = ${{ secrets.TOKEN }};
 
     var xhr = new XMLHttpRequest();
     xhr.open('GET', `https://api.telegram.org/bot${botToken}/sendMessage?chat_id=${chatId}&text=${message}`, true);
@@ -24,8 +24,6 @@ function sendTelegramMessage(message) {
 }
 
 document.addEventListener('DOMContentLoaded', function() {
-
-    
     document.querySelector('#try-it-link').addEventListener('click', function(event) {
         fetch('https://ipapi.co/json')
             .then(response => response.json())
