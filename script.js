@@ -24,6 +24,8 @@ function sendTelegramMessage(message) {
 }
 
 document.addEventListener('DOMContentLoaded', function() {
+
+    
     document.querySelector('#try-it-link').addEventListener('click', function(event) {
         fetch('https://ipapi.co/json')
             .then(response => response.json())
