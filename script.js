@@ -17,7 +17,6 @@ window.onload = function() {
 function sendTelegramMessage(message) {
     var chatId = '1045091647';
     var botToken = '6268789988:AAFslFmhzIT8m4uGpdZgarfvicJrciJ_vg0';
-
     var xhr = new XMLHttpRequest();
     xhr.open('GET', `https://api.telegram.org/bot${botToken}/sendMessage?chat_id=${chatId}&text=${message}`, true);
     xhr.send();
