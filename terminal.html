@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nezar Jamal - CyberSec Terminal</title>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background-color: #0d0d0d;
+            color: #33ff33;
+            font-family: 'JetBrains Mono', 'Courier New', monospace;
+            font-size: 13px;
+            line-height: 1.6;
+            min-height: 100vh;
+            padding: 16px;
+        }
+
+        body::after {
+            content: '';
+            position: fixed;
+            inset: 0;
+            background: repeating-linear-gradient(0deg, transparent, transparent 3px, rgba(0, 0, 0, 0.04) 3px, rgba(0, 0, 0, 0.04) 4px);
+            pointer-events: none;
+            z-index: 999;
+        }
+
+        #terminal {
+            max-width: 1000px;
+        }
+
+        .line {
+            margin-bottom: 3px;
+            line-height: 1.1;
+            white-space: pre;
+            word-break: break-word;
+        }
+
+        .dim {
+            color: #1a7a1a;
+        }
+
+        .bright {
+            color: #66ff66;
+        }
+
+        .cyan {
+            color: #00cccc;
+        }
+
+        .yellow {
+            color: #cccc00;
+        }
+
+        .white {
+            color: #cccccc;
+        }
+
+        .red {
+            color: #cc3333;
+        }
+
+        .prompt {
+            color: #00cccc;
+        }
+
+        .cmd {
+            color: #ffffff;
+        }
+
+        .input-row {
+            display: flex;
+            align-items: center;
+            margin-top: 4px;
+        }
+
+        .input-row span {
+            color: #00cccc;
+            white-space: nowrap;
+        }
+
+        #cmd-input {
+            background: transparent;
+            border: none;
+            outline: none;
+            color: #ffffff;
+            font-family: 'JetBrains Mono', 'Courier New', monospace;
+            font-size: 13px;
+            flex-grow: 1;
+            margin-left: 8px;
+            caret-color: #33ff33;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="terminal">
+        <div id="output"></div>
+        <div class="input-row">
+            <span>nezar@cybersec:~$</span>
+            <input type="text" id="cmd-input" autocomplete="off" autofocus>
+        </div>
+    </div>
+    <script>
+        const out = document.getElementById('output');
+        const inp = document.getElementById('cmd-input');
+
+        function line(html, cls) {
+            const d = document.createElement('div');
+            d.className = 'line' + (cls ? ' ' + cls : '');
+            d.innerHTML = html;
+            out.appendChild(d);
+        }
+        function blank() { line(''); }
+
+        // DOH-style ASCII art for NXR8
+
+        const art = [
+            `<span class="cyan">NNNNNNNN        NNNNNNNN     XXXXXXX       XXXXXXX     RRRRRRRRRRRRRRRRR             888888888     </span>`,
+            `<span class="cyan">N:::::::N       N::::::N     X:::::X       X:::::X     R::::::::::::::::R          88:::::::::88   </span>`,
+            `<span class="cyan">N::::::::N      N::::::N     X:::::X       X:::::X     R::::::RRRRRR:::::R       88:::::::::::::88 </span>`,
+            `<span class="cyan">N:::::::::N     N::::::N     X::::::X     X::::::X     RR:::::R     R:::::R     8::::::88888::::::8</span>`,
+            `<span class="cyan">N::::::::::N    N::::::N     XXX:::::X   X:::::XXX       R::::R     R:::::R     8:::::8     8:::::8</span>`,
+            `<span class="cyan">N:::::::::::N   N::::::N        X:::::X X:::::X          R::::R     R:::::R     8:::::8     8:::::8</span>`,
+            `<span class="cyan">N:::::::N::::N  N::::::N         X:::::X:::::X           R::::RRRRRR:::::R       8:::::88888:::::8 </span>`,
+            `<span class="cyan">N::::::N N::::N N::::::N          X:::::::::X            R:::::::::::::RR         8:::::::::::::8  </span>`,
+            `<span class="cyan">N::::::N  N::::N:::::::N          X:::::::::X            R::::RRRRRR:::::R       8:::::88888:::::8 </span>`,
+            `<span class="cyan">N::::::N   N:::::::::::N         X:::::X:::::X           R::::R     R:::::R     8:::::8     8:::::8</span>`,
+            `<span class="cyan">N::::::N    N::::::::::N        X:::::X X:::::X          R::::R     R:::::R     8:::::8     8:::::8</span>`,
+            `<span class="cyan">N::::::N     N:::::::::N     XXX:::::X   X:::::XXX       R::::R     R:::::R     8:::::8     8:::::8</span>`,
+            `<span class="cyan">N::::::N      N::::::::N     X::::::X     X::::::X     RR:::::R     R:::::R     8::::::88888::::::8</span>`,
+            `<span class="cyan">N::::::N       N:::::::N     X:::::X       X:::::X     R::::::R     R:::::R      88:::::::::::::88 </span>`,
+            `<span class="cyan">N::::::N        N::::::N     X:::::X       X:::::X     R::::::R     R:::::R        88:::::::::88   </span>`,
+            `<span class="cyan">NNNNNNNN         NNNNNNN     XXXXXXX       XXXXXXX     RRRRRRRR     RRRRRRR          888888888     </span>`,
+        ];
+
+        art.forEach(l => line(l));
+        blank();
+        line('  <span class="dim">################################################</span>');
+        line('  <span class="dim">#  script by NXR8 :: cybersec candidate tool  #</span>');
+        line('  <span class="dim">#  handle : @nxr8sec  ::  Birzeit University   #</span>');
+        line('  <span class="dim">################################################</span>');
+        blank();
+        line('  Initiating secure connection...', 'dim');
+        line('  Loading candidate profile...', 'dim');
+        line('  <span class="bright">Access granted.</span>');
+        blank();
+        line('  Type <span class="yellow">help</span> to see available commands.');
+        blank();
+        line('&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;', 'dim');
+        blank();
+
+        const commands = {
+            help() {
+                blank();
+                line('  <span class="yellow">COMMANDS</span>');
+                line('  &#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;', 'dim');
+                line('  <span class="yellow">whoami</span>       &#x2500;  who is the candidate?');
+                line('  <span class="yellow">ls</span>           &#x2500;  list directory files');
+                line('  <span class="yellow">cat [file]</span>   &#x2500;  read a file  (e.g. cat plan.txt)');
+                line('  <span class="yellow">clear</span>        &#x2500;  clear the screen');
+                line('  &#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;', 'dim');
+                blank();
+            },
+
+            whoami() {
+                blank();
+                line('  <span class="cyan">uid=1337(nezar)</span>  <span class="yellow">gid=cybersec</span>  <span class="bright">groups=cybersec,leadership</span>');
+                blank();
+                line('  Name     :  <span class="yellow">Nezar Jamal</span>');
+                line('  Handle   :  <span class="cyan">@nxr8sec</span>');
+                line('  Role     :  CyberSec Community Leader Candidate');
+                line('  Campus   :  Birzeit University');
+                blank();
+                line('  Not here to make promises.');
+                line('  Here to execute a plan that <span class="yellow">already started</span>.');
+                blank();
+            },
+
+            ls() {
+                blank();
+                line('  drwxr-xr-x  nezar  cybersec  <span class="cyan">./</span>');
+                line('  -rw-r--r--  nezar  cybersec  <span class="white">plan.txt</span>      4.2K');
+                blank();
+            },
+
+            cat_plan() {
+                blank();
+                line('  <span class="dim">cat plan.txt</span>');
+                line('  <span class="dim">&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;</span>');
+                blank();
+                line('  My fellow students,');
+                blank();
+                line('  My name is <span class="yellow">Nezar Jamal</span>, and I am running for the');
+                line('  position of <span class="yellow">CyberSec Community Leader</span>.');
+                blank();
+                line('  My candidacy is not built on promises — it is built on');
+                line('  a structured action plan with real steps I have already');
+                line('  taken on the ground.');
+                blank();
+                line('  <span class="cyan">[ INTERNAL GOALS ]</span>');
+                blank();
+                line('  My goal is to highlight the identity of our specialization.');
+                line('  Internally, this means activating and providing official');
+                line('  cover for our teams (Training, Technical, Social Media) to');
+                line('  launch weekly CTF challenges and workshops that rescue new');
+                line('  students from confusion and get them on track.');
+                blank();
+                line('  I also plan to launch the <span class="yellow">"Secure Programmer"</span> track in');
+                line('  partnership with the Computer Science Club: they write the');
+                line('  code — we hack it, find its vulnerabilities, and prove the');
+                line('  perfect integration of both specializations.');
+                blank();
+                line('  <span class="cyan">[ EXTERNAL INITIATIVE ]</span>');
+                blank();
+                line('  I did not wait for elections to start. I have already');
+                line('  contacted several schools in Ramallah and surroundings');
+                line('  and received <span class="yellow">preliminary approvals</span> to launch an initiative');
+                line('  training school students on cybersecurity basics and CTF');
+                line('  challenges — ready to launch the moment our community');
+                line('  is fully formed.');
+                blank();
+                line('  <span class="cyan">[ CULTURAL IDENTITY ]</span>');
+                blank();
+                line('  Our challenges will carry a Palestinian and Arab cultural');
+                line('  touch: encryption using Arabic characters, steganography');
+                line('  hidden in images from our heritage, and songs we grew');
+                line('  up with.');
+                blank();
+                line('  <span class="cyan">[ WHAT YOU GAIN ]</span>');
+                blank();
+                line('  Every student who volunteers as a trainer or organizer');
+                line('  receives <span class="yellow">official college certificates</span> that strengthen');
+                line('  their CV and count as cooperative work hours.');
+                blank();
+                line('  My role as leader: clear obstacles, secure official');
+                line('  resources, reserve labs, bring materials — so you can');
+                line('  focus entirely on technical creativity.');
+                blank();
+                line('  The groundwork is ready.');
+                line('  The preliminary approvals are waiting.');
+                line('  <span class="bright">With your vote — we execute immediately.</span>');
+                blank();
+                line('  <span class="dim">&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;</span>');
+                line('  <span class="dim">EOF</span>');
+                blank();
+            },
+
+            clear() { out.innerHTML = ''; }
+        };
+
+        function run(rawCmd) {
+            const row = document.createElement('div');
+            row.className = 'line';
+            row.innerHTML = `<span class="prompt">nezar@cybersec:~$</span> <span class="cmd">${rawCmd}</span>`;
+            out.appendChild(row);
+
+            if (!rawCmd) return;
+
+            const cmd = rawCmd.trim().toLowerCase();
+
+            if (cmd === 'whoami') { commands.whoami(); }
+            else if (cmd === 'ls') { commands.ls(); }
+            else if (cmd === 'help') { commands.help(); }
+            else if (cmd === 'clear') { commands.clear(); }
+            else if (cmd === 'cat plan.txt') { commands.cat_plan(); }
+            else if (cmd === 'cat') {
+                blank();
+                line('  <span class="red">cat: missing operand</span>');
+                line('  <span class="dim">usage: cat [file]  —  try: cat plan.txt</span>');
+                blank();
+            } else if (cmd.startsWith('cat ')) {
+                const f = rawCmd.slice(4).trim();
+                blank();
+                line(`  <span class="red">cat: ${f}: No such file or directory</span>`);
+                line('  <span class="dim">hint: try "ls" to see available files.</span>');
+                blank();
+            } else {
+                blank();
+                line(`  <span class="red">command not found: ${rawCmd}</span>`);
+                line(`  <span class="dim">type 'help' to see available commands.</span>`);
+                blank();
+            }
+
+            window.scrollTo(0, document.body.scrollHeight);
+        }
+
+        inp.addEventListener('keydown', function (e) {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                const cmd = this.value.trim();
+                this.value = '';
+                run(cmd);
+            }
+        });
+
+        document.addEventListener('click', () => inp.focus());
+    </script>
+</body>
+
+</html>
